@@ -11,8 +11,6 @@ from sklearn.neighbors import NearestNeighbors
 
 inf = pd.read_csv('steam_games.csv')
 
-modelo = joblib.load('recomendacion.pkl')
-
 inf['Year'] = inf['Year'].astype(str)
 
 app = FastAPI()
