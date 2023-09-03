@@ -8,6 +8,7 @@ from enum import Enum
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.neighbors import NearestNeighbors
+import logging
 #from fastapi.middleware.cors import CORSMiddleware
 
 inf = pd.read_csv('csv_final.csv')
@@ -76,5 +77,21 @@ def precio(juego: str):
 
 @app.get("/recomendacion/{juego}/Recomienda 4 juegos similares")
 def juegos_recomendados(juego: str):
+    recom = recomendacion(juego)
+    return recom
+
+@app.get("/recomendacion2/{juego}/Recomienda 4 juegos similares2")
+def juegos_recomendados(juego: str):
+    try:
+        recom = recomendacion(juego)
+        return recom
+    except Exception as e:
+        logging.error(f"Error en juegos_recomendados: {str(e)}")
+        return {'Error': 'Se produjo un error interno en el servidor.'}
+    
+@app.get("/recomendacion3/{juego}/Recomienda 4 juegos similares3")
+def juegos_recomendados(juego: str):
+    if juego not in inf['title'].values:
+        return {'Error': f'El juego "{juego}" no fue encontrado en la base de datos.'}
     recom = recomendacion(juego)
     return recom
