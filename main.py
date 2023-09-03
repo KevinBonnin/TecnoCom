@@ -8,23 +8,13 @@ from enum import Enum
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.neighbors import NearestNeighbors
-from fastapi.middleware.cors import CORSMiddleware
+#from fastapi.middleware.cors import CORSMiddleware
 
-inf = pd.read_csv('steam_games.csv')
+inf = pd.read_csv('csv_final.csv')
 
 inf['Year'] = inf['Year'].astype(str)
 
 app = FastAPI()
-
-origins = ["*"]  # Cambia "*" a los dominios permitidos en producción
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 def recomendacion( titulo ):
     # Reemplazar valores NaN en la columna de sinopsis por una cadena vacía
@@ -93,7 +83,7 @@ def precio(juego: str):
     valor = jueg['price'].values[0]
     return {'El valor del juego': juego, 'es': valor}
 
-@app.get("recomendacion/{juego}/Recomienda 4 juegos similares")
+@app.get("/recomendacion/{juego}/Recomienda 4 juegos similares")
 def juegos_recomendados(juego: str):
     recom = recomendacion(juego)
     return {recom}
