@@ -51,13 +51,14 @@ def recomendacion( titulo ):
     model = NearestNeighbors(n_neighbors=n_neighbors, metric=metric)
     model.fit(feature_vectors)
 
-    movie_index = inf[inf['title'] == titulo].index[0]
+    game_index = inf[inf['title'] == titulo].index[0]
 
-    s, indices = model.kneighbors(feature_vectors[movie_index].reshape(1, -1))
+    s, indices = model.kneighbors(feature_vectors[game_index].reshape(1, -1))
 
-    recommended_movies = inf.loc[indices.flatten()].copy()
+    recommended_games = inf.loc[indices.flatten()].copy()
+    recommended_titles = recommended_games['title'].head(5).tolist()
 
-    return recommended_movies[['title']].head(5)
+    return {'Recomendaciones': recommended_titles}
 
 @app.get("/genero/{Year}/Los 5 géneros más vendidos.")
 def genero( Year: str ):
