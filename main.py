@@ -17,20 +17,10 @@ inf['Year'] = inf['Year'].astype(str)
 app = FastAPI()
 
 def recomendacion( titulo ):
-    # Reemplazar valores NaN en la columna de sinopsis por una cadena vacía
-    inf['genres'] = inf['genres'].fillna('')
-
-    # Reemplazar valores NaN en la columna de belongs_to_collection por una cadena vacía
-    inf['specs'] = inf['specs'].fillna('')
-    
-    # Reemplazar valores NaN en la columna de crew por una cadena vacía
-    inf['tags'] = inf['tags'].fillna('')
-
     # Obtener las características de las películas
     generos = inf['genres'].tolist()
     aspectos = inf['specs'].tolist()
     etiquetas = inf['tags'].tolist()
-    #collection = juegos['belongs_to_collection'].tolist()
 
     n_components = min(50, len(etiquetas[0].split('|')))
 
