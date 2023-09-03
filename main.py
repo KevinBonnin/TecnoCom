@@ -76,4 +76,4 @@ def precio(juego: str):
 @app.get("/recomendacion/{juego}/Recomienda 4 juegos similares")
 def juegos_recomendados(juego: str):
     recom = recomendacion(juego)
-    return {recom}
+    return recom
