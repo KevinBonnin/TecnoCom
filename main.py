@@ -17,7 +17,24 @@ inf['Year'] = inf['Year'].astype(str)
 
 app = FastAPI()
 
-def recomendacion( titulo ):
+
+
+@app.get("/genero/{Year}/Los 5 géneros más vendidos.")
+def genero( Year: str ):
+    juegos = (inf[inf['Year'] == Year])
+    juegos['genres'] = juegos['genres'].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else [])
+    generos_desglosados = juegos['genres'].explode()
+    generos_mas_vendidos = generos_desglosados.value_counts().head(5).index.tolist()
+    return {'Los generos mas vendidos en el año': Year, 'son': generos_mas_vendidos}
+
+@app.get("/precio/{juego}/Precio del juego solicitado")
+def precio(juego: str):
+    jueg = (inf[inf['title'] == juego])
+    valor = jueg['price'].values[0]
+    return {'El valor del juego': juego, 'es': valor}
+
+@app.get("/recomendacion/{juego}/Recomienda 4 juegos similares")
+def juegos_recomendados(juego: str):
     # Obtener las características de las películas
     generos = inf['genres'].tolist()
     aspectos = inf['specs'].tolist()
@@ -52,7 +69,7 @@ def recomendacion( titulo ):
     model = NearestNeighbors(n_neighbors=n_neighbors, metric=metric)
     model.fit(feature_vectors)
 
-    game_index = inf[inf['title'] == titulo].index[0]
+    game_index = inf[inf['title'] == juego].index[0]
 
     s, indices = model.kneighbors(feature_vectors[game_index].reshape(1, -1))
 
@@ -60,38 +77,3 @@ def recomendacion( titulo ):
     #recommended_titles = recommended_games['title'].head(5).tolist()
 
     return recommended_games[['title']].head(5)
-
-@app.get("/genero/{Year}/Los 5 géneros más vendidos.")
-def genero( Year: str ):
-    juegos = (inf[inf['Year'] == Year])
-    juegos['genres'] = juegos['genres'].apply(lambda x: ast.literal_eval(x) if pd.notnull(x) else [])
-    generos_desglosados = juegos['genres'].explode()
-    generos_mas_vendidos = generos_desglosados.value_counts().head(5).index.tolist()
-    return {'Los generos mas vendidos en el año': Year, 'son': generos_mas_vendidos}
-
-@app.get("/precio/{juego}/Precio del juego solicitado")
-def precio(juego: str):
-    jueg = (inf[inf['title'] == juego])
-    valor = jueg['price'].values[0]
-    return {'El valor del juego': juego, 'es': valor}
-
-@app.get("/recomendacion/{juego}/Recomienda 4 juegos similares")
-def juegos_recomendados(juego: str):
-   # recom = recomendacion(juego)
-    return recomendacion(juego)
-
-@app.get("/recomendacion2/{juego}/Recomienda 4 juegos similares2")
-def juegos_recomendados(juego: str):
-    try:
-        recom = recomendacion(juego)
-        return recom
-    except Exception as e:
-        logging.error(f"Error en juegos_recomendados: {str(e)}")
-        return {'Error': 'Se produjo un error interno en el servidor.'}
-    
-@app.get("/recomendacion3/{juego}/Recomienda 4 juegos similares3")
-def juegos_recomendados(juego: str):
-    if juego not in inf['title'].values:
-        return {'Error': f'El juego "{juego}" no fue encontrado en la base de datos.'}
-    recom = recomendacion(juego)
-    return recom
