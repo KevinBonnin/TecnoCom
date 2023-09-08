@@ -57,9 +57,9 @@ def recomendacion( titulo ):
     s, indices = model.kneighbors(feature_vectors[game_index].reshape(1, -1))
 
     recommended_games = inf.loc[indices.flatten()].copy()
-    recommended_titles = recommended_games['title'].head(5).tolist()
+    #recommended_titles = recommended_games['title'].head(5).tolist()
 
-    return {'Recomendaciones': recommended_titles}
+    return recommended_games[['title']].head(5)
 
 @app.get("/genero/{Year}/Los 5 géneros más vendidos.")
 def genero( Year: str ):
